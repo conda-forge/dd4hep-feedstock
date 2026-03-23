@@ -1,6 +1,6 @@
 context:
   name: dd4hep
-  version: "1.34"
+  version: "1-36"
   tag: v01-34
 
 package:
