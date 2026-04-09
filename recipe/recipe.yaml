@@ -1,15 +1,14 @@
 context:
   name: dd4hep
-  version: "1-36"
-  tag: v01-34
+  tag: v01-36
 
 package:
   name: ${{ name|lower }}
-  version: ${{ version }}
+  version: ${{ (tag | replace("v", "") | split("-"))[0] | int ~ "." ~ (tag | replace("v", "") | split("-"))[1] | int }}
 
 source:
   url: https://github.com/AIDASoft/DD4hep/archive/refs/tags/${{ tag }}.tar.gz
-  sha256: 1c121f4b3eb14d104b7a7f734e7e52efc4b6e4e5bc74d21d5d2de1b91c8f9f75
+  sha256: 89c60c035fba04c94ee6ea68d4caecfe4c3c7edbb46aec9e613e6af9826fba2f
   patches:
     - patches/0001-fix-auto-detect-C-standard-from-ROOT-if-not-explicit.patch
     - patches/0002-fix-remove-overly-conservative-Geant4-C-standard-che.patch
