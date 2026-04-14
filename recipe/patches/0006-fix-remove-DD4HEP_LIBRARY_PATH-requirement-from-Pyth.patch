@@ -1,4 +1,4 @@
-From 5fdc8df74b9bc059ae74a44602756af9d457295f Mon Sep 17 00:00:00 2001
+From eb52b7150fe4707ea031aa6c92bdcbfd8396a86b Mon Sep 17 00:00:00 2001
 From: Chris Burr <christopher.burr@cern.ch>
 Date: Fri, 9 Jan 2026 22:16:49 +0100
 Subject: [PATCH 6/6] fix: remove DD4HEP_LIBRARY_PATH requirement from Python
@@ -17,10 +17,10 @@ This simplifies the setup required to use DD4hep Python bindings.
  3 files changed, 17 deletions(-)
 
 diff --git a/DDCore/python/dd4hep_base.py b/DDCore/python/dd4hep_base.py
-index 6f71b629..a4a35edf 100644
+index 8209a85a..e4b0ae9e 100644
 --- a/DDCore/python/dd4hep_base.py
 +++ b/DDCore/python/dd4hep_base.py
-@@ -57,12 +57,6 @@ def loaddd4hep():
+@@ -145,12 +145,6 @@ def loaddd4hep():
    sys.path.append(os.path.join(rootsys, 'lib', 'root'))
    sys.path.append(os.path.join(rootsys, 'lib64', 'root'))
    from ROOT import gSystem
@@ -49,10 +49,10 @@ index 7bf0e73c..2651bdda 100644
    # load with ROOT the DDDigi plugin library, which in turn loads the DDigi module
    result = gSystem.Load("libDDDigiPlugins")
 diff --git a/DDG4/python/DDG4.py b/DDG4/python/DDG4.py
-index 8ba8a203..2e690f8c 100644
+index 5b241952..a9da04e5 100644
 --- a/DDG4/python/DDG4.py
 +++ b/DDG4/python/DDG4.py
-@@ -28,13 +28,6 @@ def loadDDG4():
+@@ -29,13 +29,6 @@ def loadDDG4():
      gSystem.Load("libglapi")
      ROOT.gErrorIgnoreLevel = orgLevel
  
@@ -67,5 +67,5 @@ index 8ba8a203..2e690f8c 100644
    if result < 0:
      raise Exception('DDG4.py: Failed to load the DDG4 library libDDG4Plugins: ' + gSystem.GetErrorStr())
 -- 
-2.48.1
+2.53.0
 

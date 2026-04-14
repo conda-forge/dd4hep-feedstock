@@ -1,4 +1,4 @@
-From c58e3d63c7db2b58980f0280e8d2e203d4d776a5 Mon Sep 17 00:00:00 2001
+From 1482a62cc77968efca99a5ec10ec8328d888900d Mon Sep 17 00:00:00 2001
 From: Chris Burr <christopher.burr@cern.ch>
 Date: Fri, 9 Jan 2026 22:15:21 +0100
 Subject: [PATCH 3/6] fix: preload libpython when running listcomponents on
@@ -12,15 +12,15 @@ is not linked against Python.
 Fix by setting DYLD_INSERT_LIBRARIES to preload libpython when
 running listcomponents during the build.
 ---
- cmake/DD4hep.cmake | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ cmake/DD4hep.cmake | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/cmake/DD4hep.cmake b/cmake/DD4hep.cmake
-index a842e82b..ec79089b 100644
+index 8232f8ff..116a1edb 100644
 --- a/cmake/DD4hep.cmake
 +++ b/cmake/DD4hep.cmake
-@@ -85,9 +85,20 @@ function(dd4hep_generate_rootmap library)
- 
+@@ -98,12 +98,20 @@ function(dd4hep_generate_rootmap library)
+   )
    set(rootmapfile ${CMAKE_SHARED_MODULE_PREFIX}${library}.components)
  
 +  # On macOS, plugins using Python symbols are built with -undefined dynamic_lookup.
@@ -32,15 +32,14 @@ index a842e82b..ec79089b 100644
 +
    add_custom_command(OUTPUT ${rootmapfile}
                       DEPENDS ${library}
--                     COMMAND ${ENV_VAR}=${${ENV_VAR}_VALUE} $<TARGET_FILE:DD4hep::listcomponents> -o ${rootmapfile} $<TARGET_FILE_NAME:${library}>
-+                     VERBATIM COMMAND
-+                     "${CMAKE_COMMAND}" -E env
-+                     "${ENV_VAR}=${${ENV_VAR}_VALUE}"
+                      VERBATIM COMMAND
+                      "${CMAKE_COMMAND}" -E env
+                      "${ENV_VAR}=${_ld_path}"
+                      "ROOT_LIBRARY_PATH=${DD4HEP_ROOT_LIBRARY_PATH}"
 +                     ${_preload_env}
-+                     $<TARGET_FILE:DD4hep::listcomponents> -o ${rootmapfile} $<TARGET_FILE_NAME:${library}>
+                      $<TARGET_FILE:DD4hep::listcomponents> -o ${rootmapfile} $<TARGET_FILE_NAME:${library}>
                       WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
                       )
- 
 -- 
-2.48.1
+2.53.0
 

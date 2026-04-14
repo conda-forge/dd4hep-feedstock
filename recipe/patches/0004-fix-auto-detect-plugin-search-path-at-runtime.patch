@@ -1,4 +1,4 @@
-From 56fc77d62462b367590509ad6dff289dddc3dea4 Mon Sep 17 00:00:00 2001
+From 6cfc27cf44da78997cdda0981e0a6752563d7eec Mon Sep 17 00:00:00 2001
 From: Chris Burr <christopher.burr@cern.ch>
 Date: Fri, 9 Jan 2026 22:16:28 +0100
 Subject: [PATCH 4/6] fix: auto-detect plugin search path at runtime
@@ -71,10 +71,10 @@ index 2ec602b7..d81b6041 100644
            std::string::size_type newpos = 0;
            while ( pos != std::string::npos ) {
 diff --git a/GaudiPluginService/src/PluginServiceV2.cpp b/GaudiPluginService/src/PluginServiceV2.cpp
-index 4afd1187..d6181974 100644
+index 7075d542..6a504766 100644
 --- a/GaudiPluginService/src/PluginServiceV2.cpp
 +++ b/GaudiPluginService/src/PluginServiceV2.cpp
-@@ -92,6 +92,19 @@ namespace {
+@@ -85,6 +85,19 @@ namespace {
    std::string old_style_name( const std::string& name ) {
      return std::for_each( name.begin(), name.end(), OldStyleCnv() ).name;
    }
@@ -94,7 +94,7 @@ index 4afd1187..d6181974 100644
  } // namespace
  
  namespace Gaudi {
-@@ -157,8 +170,18 @@ namespace Gaudi {
+@@ -150,8 +163,18 @@ namespace Gaudi {
            std::smatch matches;
  
            std::string search_path;
@@ -115,5 +115,5 @@ index 4afd1187..d6181974 100644
              return;
            }
 -- 
-2.48.1
+2.53.0
 

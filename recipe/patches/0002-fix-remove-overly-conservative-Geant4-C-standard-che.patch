@@ -1,4 +1,4 @@
-From a39c563a074d4a95b356d20a73a8320a83c8d81f Mon Sep 17 00:00:00 2001
+From 759a05e1be067f8a0667b6229244d75dc3d8b5b4 Mon Sep 17 00:00:00 2001
 From: Chris Burr <christopher.burr@cern.ch>
 Date: Fri, 9 Jan 2026 22:15:08 +0100
 Subject: [PATCH 2/6] fix: remove overly conservative Geant4 C++ standard check
@@ -12,7 +12,7 @@ link against Geant4 built with C++17.
  1 file changed, 3 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 6818195b..2afa5170 100644
+index 333774f3..c7af2abb 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -185,9 +185,6 @@ if(DD4HEP_USE_GEANT4)
@@ -26,5 +26,5 @@ index 6818195b..2afa5170 100644
    DD4HEP_SETUP_GEANT4_TARGETS()
    # Geant4 sets the CLHEP include directory to include_directories, we undo this here
 -- 
-2.48.1
+2.53.0
 
