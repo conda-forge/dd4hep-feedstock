@@ -1,4 +1,4 @@
-From 3296c30372c1e1146e931262b5b2f6384be1ef8e Mon Sep 17 00:00:00 2001
+From 8776084036285891a8a8363fcf0c5fb9a60b4a11 Mon Sep 17 00:00:00 2001
 From: Chris Burr <christopher.burr@cern.ch>
 Date: Fri, 9 Jan 2026 16:31:38 +0100
 Subject: [PATCH 1/6] fix: auto-detect C++ standard from ROOT if not explicitly
@@ -12,7 +12,7 @@ warnings about C++ standard mismatch with ROOT.
  1 file changed, 25 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 58ab1678..6818195b 100644
+index 7a13b3fa..333774f3 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -52,6 +52,10 @@ ENDIF()
@@ -24,7 +24,7 @@ index 58ab1678..6818195b 100644
 +  set(_DD4HEP_AUTODETECT_CXX_STANDARD ON)
 +endif()
  # Set C++ standard
- set(CMAKE_CXX_STANDARD 14 CACHE STRING "C++ standard used for compiling")
+ set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard used for compiling")
  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 @@ -140,6 +144,27 @@ dd4hep_configure_output( OUTPUT "${PROJECT_BINARY_DIR}" INSTALL "${CMAKE_INSTALL
  # Configure ROOT
@@ -55,5 +55,5 @@ index 58ab1678..6818195b 100644
  # for the ROOTEve component if the ROOTEve component exists.
  # DDEve and one executable in UtilityApps depend on this
 -- 
-2.48.1
+2.53.0
 
