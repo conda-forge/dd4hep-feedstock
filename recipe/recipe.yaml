@@ -16,14 +16,13 @@ source:
     - patches/0004-fix-auto-detect-plugin-search-path-at-runtime.patch
     - patches/0005-fix-auto-detect-DD4hepINSTALL-at-runtime.patch
     - patches/0006-fix-remove-DD4HEP_LIBRARY_PATH-requirement-from-Pyth.patch
+    - patches/0007-fix-define-_LIBCPP_DISABLE_AVAILABILITY-on-macOS.patch
 
 build:
   number: 0
   skip:
     - win
   script:
-    - if: osx
-      then: export CXXFLAGS="${CXXFLAGS} -D_LIBCPP_DISABLE_AVAILABILITY"
     - |
       mkdir -p build
       cd build
