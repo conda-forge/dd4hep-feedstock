@@ -1,14 +1,13 @@
 context:
   name: dd4hep
   version: "1-37"
-  tag: v01-34
 
 package:
   name: ${{ name|lower }}
-  version: ${{ version }}
+  version: ${{ version|replace('-', '.') }}
 
 source:
-  url: https://github.com/AIDASoft/DD4hep/archive/refs/tags/${{ tag }}.tar.gz
+  url: https://github.com/AIDASoft/DD4hep/archive/refs/tags/v0${{ version }}.tar.gz
   sha256: 1c121f4b3eb14d104b7a7f734e7e52efc4b6e4e5bc74d21d5d2de1b91c8f9f75
   patches:
     - patches/0001-fix-auto-detect-C-standard-from-ROOT-if-not-explicit.patch
