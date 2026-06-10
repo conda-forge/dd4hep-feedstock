@@ -23,6 +23,16 @@ build:
   skip:
     - win
   script:
+    - if: linux
+      then:
+        # Prevent the linker from tail-merging short string literals (e.g. the XML
+        # tag "include") onto the suffix of embedded build-path strings. Such
+        # aliases are corrupted by rattler-build/conda binary prefix relocation,
+        # which shifts the path left and NUL-pads the tail the literal points into,
+        # leaving e.g. dd4hep::xml::Unicode_include with an empty name -> duplicate
+        # empty-tag registration crash on import (seen on linux-aarch64).
+        export CFLAGS="${CFLAGS} -fno-merge-constants"
+        export CXXFLAGS="${CXXFLAGS} -fno-merge-constants"
     - |
       mkdir -p build
       cd build
