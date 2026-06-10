@@ -22,6 +22,8 @@ build:
   number: 0
   skip:
     - win
+    - ppc64le
+    - osx and x86_64
   script:
     - if: linux
       then:
