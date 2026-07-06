@@ -12,6 +12,8 @@ cxx_compiler_version:
 - '14'
 docker_image:
 - quay.io/condaforge/linux-anvil-aarch64:alma9
+geant4:
+- 11.4.2
 libboost_devel:
 - '1.90'
 pin_run_as_build:
@@ -27,7 +29,7 @@ root_cxx_standard:
 target_platform:
 - linux-aarch64
 tbb_devel:
-- '2022'
+- '2023'
 xerces_c:
 - '3.3'
 zip_keys:
