@@ -1,0 +1,57 @@
+From 5741829e583730f3e26ddfc7fd50b1f774b39018 Mon Sep 17 00:00:00 2001
+From: Chris Burr <christopher.burr@cern.ch>
+Date: Tue, 9 Jun 2026 10:23:24 +0200
+Subject: [PATCH 6/6] fix: define _LIBCPP_DISABLE_AVAILABILITY on macOS
+
+libc++ availability annotations reject std::from_chars (and other 13.3+
+features) when targeting older macOS. A directory-level compile definition
+handles regular compilation, but dd4hep_add_dictionary builds the
+rootcling command line only from each target's INTERFACE_COMPILE_DEFINITIONS
+(and explicit DEFINITIONS), so the define must also be seeded there to reach
+rootcling/cling.
+---
+ CMakeLists.txt          | 8 ++++++++
+ cmake/DD4hepBuild.cmake | 8 ++++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index abdb37a..e92176a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -61,6 +61,14 @@ set(CMAKE_CXX_STANDARD 17 CACHE STRING "C++ standard used for compiling")
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ 
++if(APPLE)
++  # conda-forge: libc++ availability annotations reject std::from_chars (and
++  # other 13.3+ features) when targeting older macOS. This covers regular
++  # compilation; rootcling/cling needs the same define seeded separately in
++  # dd4hep_add_dictionary (see cmake/DD4hepBuild.cmake).
++  add_compile_definitions(_LIBCPP_DISABLE_AVAILABILITY)
++endif()
++
+ SET(DD4hep_DIR ${CMAKE_SOURCE_DIR} CACHE STRING "DD4hep directory")
+ SET(DD4hep_ROOT ${CMAKE_INSTALL_PREFIX})
+ 
+diff --git a/cmake/DD4hepBuild.cmake b/cmake/DD4hepBuild.cmake
+index de23315..b335a41 100644
+--- a/cmake/DD4hepBuild.cmake
++++ b/cmake/DD4hepBuild.cmake
+@@ -573,6 +573,14 @@ function(dd4hep_add_dictionary dictionary )
+   endforeach()
+ 
+   set(comp_defs)
++  if(APPLE)
++    # conda-forge: rootcling/cling rejects std::from_chars (and other 13.3+
++    # libc++ features) via availability annotations when targeting older macOS.
++    # This command line is built only from ARG_DEFINITIONS and dependencies'
++    # INTERFACE_COMPILE_DEFINITIONS, so a directory-level add_compile_definitions
++    # never reaches it - seed the define here instead.
++    LIST(APPEND comp_defs _LIBCPP_DISABLE_AVAILABILITY)
++  endif()
+   foreach(def ${ARG_DEFINITIONS})
+     LIST(APPEND comp_defs ${def})
+   endforeach()
+-- 
+2.47.1
+
