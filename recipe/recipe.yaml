@@ -1,6 +1,6 @@
 context:
   name: dd4hep
-  version: "1-37"
+  version: "1-38"
 
 package:
   name: ${{ name|lower }}
@@ -8,18 +8,17 @@ package:
 
 source:
   url: https://github.com/AIDASoft/DD4hep/archive/refs/tags/v0${{ version }}.tar.gz
-  sha256: ade63b28c13d8e265ef95185326bc311fdf76cd3afe1a2bc44c7ff3f6a19409c
+  sha256: 8a11c42cfd2026faae421260bc3dea9f61c78ebacd1f9ba1b0ca3ff054425ffd
   patches:
     - patches/0001-fix-auto-detect-C-standard-from-ROOT-if-not-explicit.patch
     - patches/0002-fix-remove-overly-conservative-Geant4-C-standard-che.patch
-    - patches/0003-fix-preload-libpython-when-running-listcomponents-on.patch
-    - patches/0004-fix-auto-detect-plugin-search-path-at-runtime.patch
-    - patches/0005-fix-auto-detect-DD4hepINSTALL-at-runtime.patch
-    - patches/0006-fix-remove-DD4HEP_LIBRARY_PATH-requirement-from-Pyth.patch
-    - patches/0007-fix-define-_LIBCPP_DISABLE_AVAILABILITY-on-macOS.patch
+    - patches/0003-fix-auto-detect-plugin-search-path-at-runtime.patch
+    - patches/0004-fix-auto-detect-DD4hepINSTALL-at-runtime.patch
+    - patches/0005-fix-remove-DD4HEP_LIBRARY_PATH-requirement-from-Pyth.patch
+    - patches/0006-fix-define-_LIBCPP_DISABLE_AVAILABILITY-on-macOS.patch
 
 build:
-  number: 3
+  number: 0
   skip:
     - win
     - ppc64le
@@ -32,9 +31,18 @@ build:
   script:
     - if: linux
       then: export CFLAGS="${CFLAGS} -fno-merge-constants" export CXXFLAGS="${CXXFLAGS} -fno-merge-constants"
+    # DDG4's Python plugins link with -undefined dynamic_lookup, so listcomponents
+    # has to preload libpython to resolve their Python symbols. Upstream added the
+    # DD4HEP_GENERATE_ROOTMAP_EXTRA_ENV hook for exactly this in v01-38.
+    - if: osx
+      then: export CMAKE_ARGS="${CMAKE_ARGS} -DDD4HEP_GENERATE_ROOTMAP_EXTRA_ENV=DYLD_INSERT_LIBRARIES=${PREFIX}/lib/libpython${PY_VER}.dylib"
     - |
       mkdir -p build
       cd build
+      # DDParsers exports DD4HEP_USE_GEANT4_UNITS as a PUBLIC compile definition,
+      # so this fixes mm/MeV/ns as the units for everything built against dd4hep.
+      # Upstream and key4hep both default it off, so do not "restore" the default
+      # without rebuilding dependents: the change is silent at compile time.
       cmake ${CMAKE_ARGS} \
           -GNinja \
           -DCMAKE_BUILD_TYPE=Release \
@@ -42,6 +50,7 @@ build:
           -DBUILD_SHARED_LIBS=ON \
           -DDD4HEP_USE_GEANT4=ON \
           -DDD4HEP_USE_XERCESC=ON \
+          -DDD4HEP_USE_GEANT4_UNITS=ON \
           -DDD4HEP_BUILD_EXAMPLES=OFF \
           -DDD4HEP_RELAX_PYVER=ON \
           -DPython_EXECUTABLE=$PYTHON \
@@ -81,6 +90,11 @@ tests:
       pip_check: false
   - script:
       - ddsim --help
+  # DD4HEP_USE_GEANT4_UNITS is invisible in the file listing and silent at
+  # import, so assert the scale directly. With the TGeo default these are
+  # 0.1, 1e-9 and 1e-3.
+  - script:
+      - python -c "import dd4hep; u = dd4hep.units; assert (u.millimeter, u.nanosecond, u.megaelectronvolt) == (1.0, 1.0, 1.0), f'expected Geant4 units, got mm={u.millimeter} ns={u.nanosecond} MeV={u.megaelectronvolt}'"
 
 about:
   homepage: https://dd4hep.web.cern.ch/dd4hep/
