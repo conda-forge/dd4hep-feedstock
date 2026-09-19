@@ -39,6 +39,10 @@ build:
     - |
       mkdir -p build
       cd build
+      # DDParsers exports DD4HEP_USE_GEANT4_UNITS as a PUBLIC compile definition,
+      # so this fixes mm/MeV/ns as the units for everything built against dd4hep.
+      # Upstream and key4hep both default it off, so do not "restore" the default
+      # without rebuilding dependents: the change is silent at compile time.
       cmake ${CMAKE_ARGS} \
           -GNinja \
           -DCMAKE_BUILD_TYPE=Release \
@@ -46,6 +50,7 @@ build:
           -DBUILD_SHARED_LIBS=ON \
           -DDD4HEP_USE_GEANT4=ON \
           -DDD4HEP_USE_XERCESC=ON \
+          -DDD4HEP_USE_GEANT4_UNITS=ON \
           -DDD4HEP_BUILD_EXAMPLES=OFF \
           -DDD4HEP_RELAX_PYVER=ON \
           -DPython_EXECUTABLE=$PYTHON \
