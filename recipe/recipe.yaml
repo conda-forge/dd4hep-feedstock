@@ -90,6 +90,11 @@ tests:
       pip_check: false
   - script:
       - ddsim --help
+  # DD4HEP_USE_GEANT4_UNITS is invisible in the file listing and silent at
+  # import, so assert the scale directly. With the TGeo default these are
+  # 0.1, 1e-9 and 1e-3.
+  - script:
+      - python -c "import dd4hep; u = dd4hep.units; assert (u.millimeter, u.nanosecond, u.megaelectronvolt) == (1.0, 1.0, 1.0), f'expected Geant4 units, got mm={u.millimeter} ns={u.nanosecond} MeV={u.megaelectronvolt}'"
 
 about:
   homepage: https://dd4hep.web.cern.ch/dd4hep/
