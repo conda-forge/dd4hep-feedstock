@@ -19,11 +19,16 @@ source:
     - patches/0007-fix-define-_LIBCPP_DISABLE_AVAILABILITY-on-macOS.patch
 
 build:
-  number: 2
+  number: 3
   skip:
     - win
     - ppc64le
     - osx and x86_64
+    # Geant4Converter.cpp calls the three-argument
+    # G4MaterialPropertiesTable::AddProperty, which only exists from Geant4
+    # 11.0. CMakeLists.txt still advertises 10.2.2 as the minimum, but the call
+    # is not guarded by G4VERSION_NUMBER.
+    - match(geant4, "<11")
   script:
     - if: linux
       then: export CFLAGS="${CFLAGS} -fno-merge-constants" export CXXFLAGS="${CXXFLAGS} -fno-merge-constants"
@@ -60,6 +65,10 @@ requirements:
     - root_base
     - root_cxx_standard
     - geant4
+    # Geant4Config.cmake unconditionally calls find_dependency(EXPAT), but the
+    # geant4 package only pulls in libexpat, which ships no headers. Drop this
+    # once geant4 carries expat at runtime again.
+    - expat
     - xerces-c
     - tbb-devel
   run:
